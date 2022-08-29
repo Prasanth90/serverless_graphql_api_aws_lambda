@@ -12,16 +12,22 @@ provider:
       Action:
         - dynamodb:GetItem 
         - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/ping-pong-scores-dev'
     - Effect: Allow # allow the Lambda to Get and Put Items of this table
       Action:
         - dynamodb:GetItem 
         - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/players-rank-dev'
     - Effect: Allow # allow the Lambda to Get and Put Items of this table
       Action:
         - dynamodb:GetItem 
         - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/players-dev'
 
 resources:

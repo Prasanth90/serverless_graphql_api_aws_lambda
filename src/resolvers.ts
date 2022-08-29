@@ -103,7 +103,7 @@ export const resolvers = {
     await dynamoDb.put(params).promise();
   }
 
-  const updateWinsLosses = async (playerId: string, isWon: bool) => {
+  const updateWinsLosses = async (playerId: string, isWon: boolean) => {
     const getParamsPlayer : any = {
       TableName: process.env.RANK_TABLE || '',
       Key: {
