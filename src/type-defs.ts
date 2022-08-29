@@ -5,9 +5,12 @@ export const typeDefs = gql`
     testMessage: String!
   }
   type Mutation {
-    add(name: String!): Entity!
+    add(name: String!, playerOneId: String!, playerTwoId: String!, winnerId: String!): Entity!
   }
   type Entity {
     name: String!
+    playerOneId: String!
+    playerTwoId: String!
+    winnerId: String!
   }
 `;

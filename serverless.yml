@@ -5,12 +5,18 @@ provider:
   region: us-east-1
   environment:
     ITEM_TABLE: ping-pong-scores-dev # table name
+    RANK_TABLE: players-rank-dev
   iamRoleStatements:
     - Effect: Allow # allow the Lambda to Get and Put Items of this table
       Action:
         - dynamodb:GetItem 
         - dynamodb:PutItem
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/ping-pong-scores-dev'
+    - Effect: Allow # allow the Lambda to Get and Put Items of this table
+      Action:
+        - dynamodb:GetItem 
+        - dynamodb:PutItem
+      Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/players-rank-dev'
 
 resources:
   Resources:
@@ -27,6 +33,19 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: 'ping-pong-scores-dev'
+    RanksTable: # define the table
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: playerId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: playerId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: 'players-rank-dev'
 functions:
   graphql:
     handler: src/apollo-server.graphqlHandler
