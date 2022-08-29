@@ -86,6 +86,12 @@ functions:
 plugins:
   - serverless-webpack
   - serverless-offline
+  - serverless-domain-manager
 custom:
   webpack:
     includeModules: true
+  customDomain:
+    domainName: serverless.staara.ca
+    basePath: ''
+    stage: dev
+    createRoute53Record: true
