@@ -16,8 +16,8 @@ GraphQL Endpoint(s) to manage ping pong game results
 - DynamoDB is used for storage
 
 ## Deployment
-- Currently deployed at https://serverless.staara.ca
+- Currently deployed at https://serverless.staara.ca/graphql
 
 
 
-Live demo at https://serverless.staara.ca
+**[LIVE DEMO](https://serverless.staara.ca/graphql)**
