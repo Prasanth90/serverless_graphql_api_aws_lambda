@@ -1,7 +1,8 @@
-import { MatchResult, Player, PlayerStats } from "./types";
+import { MatchResult, Player } from "./types";
 import AWS from 'aws-sdk';
 import { v4 } from 'uuid';
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+export const dynamoDb = () =>  new AWS.DynamoDB.DocumentClient();
 
 export const resolvers = {
     Query: {
@@ -29,7 +30,7 @@ export const resolvers = {
     }
   };
 
-  const getAllDocuments = async (tableName: string) : Promise<any[]> => {
+  export const getAllDocuments = async (tableName: string) : Promise<any[]> => {
     const params: any = {
       TableName: tableName
     };
@@ -37,7 +38,7 @@ export const resolvers = {
     const scanResults : any[] = [];
     let items;
     do {
-      items =  await dynamoDb.scan(params).promise();
+      items =  await dynamoDb().scan(params).promise();
       if(items) {
         items.Items?.forEach((item : any) => scanResults.push(item));
         params.ExclusiveStartKey  = items.LastEvaluatedKey;
@@ -47,7 +48,7 @@ export const resolvers = {
     return scanResults;
   }
 
-  const createPlayer =async (player: Player) => {
+  export const createPlayer = async (player: Player) => {
     const id = v4()
     const params : any = {
       TableName: process.env.PLAYERS_TABLE,
@@ -59,35 +60,35 @@ export const resolvers = {
       },
     }
 
-    const putItem = await dynamoDb.put(params).promise();
+    const putItem = await dynamoDb().put(params).promise();
 
-    if(!putItem.$response.error) {
+    if(!putItem.$response?.error) {
       const getParams : any = {
         TableName: process.env.PLAYERS_TABLE,
         Key: {
           playerId: id,
         },
       }
-  
-      const createdItem = await dynamoDb.get(getParams).promise();
+      
+      const createdItem = await dynamoDb().get(getParams).promise();
       return createdItem.Item
     }
 
     return {};
   }
 
-  const getPlayer = async (playerId: string) => {
+  export const getPlayer = async (playerId: string) => {
     const getParams : any = {
       TableName: process.env.PLAYERS_TABLE,
       Key: {
         playerId: playerId,
       },
     }
-    const createdItem = await dynamoDb.get(getParams).promise();
+    const createdItem = await dynamoDb().get(getParams).promise();
     return createdItem.Item
   }
 
-  const updateMatchResults = async (input: MatchResult) => {
+  export const updateMatchResults = async (input: MatchResult) => {
     const id = v4()
     const params : any = {
       TableName: process.env.ITEM_TABLE,
@@ -100,10 +101,10 @@ export const resolvers = {
       },
     }
 
-    await dynamoDb.put(params).promise();
+    await dynamoDb().put(params).promise();
   }
 
-  const updateWinsLosses = async (playerId: string, isWon: boolean) => {
+  export const updateWinsLosses = async (playerId: string, isWon: boolean) => {
     const getParamsPlayer : any = {
       TableName: process.env.RANK_TABLE || '',
       Key: {
@@ -111,7 +112,7 @@ export const resolvers = {
       }
      };
      
-    const playerDetails = await dynamoDb.get(getParamsPlayer).promise();
+    const playerDetails = await dynamoDb().get(getParamsPlayer).promise();
     
     if(playerDetails.Item) {
       console.log("Fetched item", playerDetails.Item);
@@ -126,7 +127,7 @@ export const resolvers = {
             ":y": isWon ? playerDetails.Item.losses : playerDetails.Item.losses + 1
         }
       };
-      await dynamoDb.update(params).promise();
+      await dynamoDb().update(params).promise();
     }
     else {
       const playerInfo : any = await getPlayer(playerId);
@@ -141,6 +142,6 @@ export const resolvers = {
           lastName: playerInfo.lastName
         },
       };
-      await dynamoDb.put(putParams).promise();
+      await dynamoDb().put(putParams).promise();
     }
   }
